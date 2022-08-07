@@ -1,0 +1,5 @@
+Lon,Lat,FilePath,Name
+39.1,41.0,something01.txt,something01
+39.2,41.1,something02.txt,something02
+39.3,41.2,something03.txt,something03
+

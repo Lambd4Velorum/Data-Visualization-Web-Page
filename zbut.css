@@ -1,0 +1,16 @@
+
+.but-big {
+    background: #F67280;
+    height: 200px;
+    width: auto;
+  }
+.row {
+display: flex;
+justify-content: center;
+align-items: center;
+background-color: #a3aa71;
+}
+
+.flex-direction-column{
+  flex-direction: column;
+}

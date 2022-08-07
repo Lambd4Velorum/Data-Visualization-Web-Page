@@ -1,0 +1,1111 @@
+<head>
+	<!-- Load plotly.js into the DOM -->
+	<script src='https://cdn.plot.ly/plotly-2.4.2.min.js'></script>
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.min.js"></script>
+    <script type="text/javascript" src="http://livejs.com/live.js"></script>
+    <link rel="stylesheet" href="zmenu.css">
+    <link rel="stylesheet" href="zbut.css">
+    <link rel="stylesheet" href="zsabitmenu2.css">
+
+    <link rel="shortcut icon" href="#">
+</head>
+
+<body>
+    <nav class="menu">
+        <ol>
+          <li class="menu-item"><a href="#0">Home</a></li>
+          <li class="menu-item"><a href="#0">About</a></li>
+          <li class="menu-item">
+            <a href="#0">Graphs</a>
+            <ol class="sub-menu">
+                <li class="menu-item"><a href="/something01.html">Graphs 1</a></li>
+                <li class="menu-item"><a href="/something02.html">Graphs 2</a></li>
+                <li class="menu-item"><a href="/something03.html">Graphs 3</a></li>
+            </ol>
+          </li>
+          <li class="menu-item">
+            <a href="#0">heatmap</a>
+            <ol class="sub-menu">
+              <li class="menu-item"><a href="/heatmap.html">heatmap</a></li>
+            </ol>
+          </li>
+          <li class="menu-item"><a href="#0">Contact</a></li>
+        </ol>
+      </nav>
+
+
+      <div id="mySidepanel" class="sidepanel">  
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <a href="/something01.html">Something 1</a>
+            <a href="/something02.html">Something 2</a>
+            <a href="/something03.html">Something 3</a>
+    </div>
+
+    
+        <button class="openbtn" onclick="openNav()">&#9776; <span>Somethings</span></button>
+
+
+<div class=main>
+    <div id="myDiv" class="row"></div>
+        <!-- Plotly chart will be drawn inside this DIV -->
+
+    <div class="row">
+        <button onclick="myFunction()">Hide/Show Splom Graph!</button>
+    </div>
+        <div id="myDivSplom" class="row"></div>
+
+
+    <div class="form-control row flex-direction-column">
+        <h3>Select Values for Ratio</h3>
+    <div class="form-wrapper"> 
+        <form>
+        <select id="values1">
+            <option value="Level1">Level1</option>
+            <option value="Level2">Level2</option>
+            <option value="Level3">Level3</option>
+            <option value="Level4">Level4</option>
+        </select>
+        <select id="values2">
+            <option value="Level1">Level1</option>
+            <option value="Level2">Level2</option>
+            <option value="Level3">Level3</option>
+            <option value="Level4">Level4</option>
+        </select>
+        <input id="buton" type="button" value="Show Ratio!" onclick="plotagraph();">
+    </form>
+    </div>
+        
+    </div>
+    <div>
+        <div id="myDivRatio" class="row">
+    </div>
+</div>  
+</body>
+
+<script>
+
+
+/* Set the width of the sidebar to 250px (show it) */
+function openNav() {
+  document.getElementById("mySidepanel").style.width = "250px";
+}
+
+/* Set the width of the sidebar to 0 (hide it) */
+function closeNav() {
+  document.getElementById("mySidepanel").style.width = "0";
+} 
+
+            function myFunction() {
+            var x = document.getElementById("myDivSplom");
+            if (x.style.display === "none") {
+                x.style.display = "flex";
+               
+            } else {
+                x.style.display = "none";
+            }
+            } ;
+
+
+
+            //////ratio grafiği/////
+            function plotagraph(val1, val2){
+            d3.csv("something02.txt", function(err, rows){
+                function unpack(rows, key) {
+                return rows.map(function(row) { return row[key]; });
+                }   
+            
+            var val1 = document.querySelector('#values1').value;
+            var val2 = document.querySelector('#values2').value;
+            
+            var ratio = [];
+            var datte = unpack(rows, "Date"); 
+                       
+
+             for(let i = 0; i < unpack(rows, val1).length ; i++){
+                let val = (parseFloat(unpack(rows, val1)[i])) / (parseFloat(unpack(rows, val2)[i]))
+                ratio.push(val);
+            } 
+
+            console.log(unpack(rows, val1));
+
+
+            var dataratio = [{
+            type: "scattergl",
+            mode: "markers+lines",
+            name: 'Level3',
+            marker: { color: '#9c640c', size: 3.5},
+            line: { color: '#9c640c', width: 0.1},
+            x: datte,
+            y: ratio
+            }];
+
+
+            var layoutratio = {
+            title: 'Time Series with Rangeslider',
+            dragmode: 'zoom',
+            height: 500,
+            paper_bgcolor: '#bfc689',
+            plot_bgcolor: '#e7ecc5',
+            width:1000, 
+            margin: {
+                l: 50,
+                r: 50,
+                b: 50,
+                t: 50,
+                pad: 4
+            },
+            xaxis1: {
+            autorange: false,
+            range: [datte[datte.length-720], datte[datte.length-1]],
+            //rangeslider: {autorange: true, thickness: 0.04, mode:"traces"},
+            type: 'date',
+            },
+            dragmode: "zoom",
+            yaxis: {
+            autorange: true,
+            type: 'linear'
+            }
+            };
+
+            Plotly.newPlot('myDivRatio', dataratio, layoutratio);  
+                    
+                    });
+
+        
+
+
+    }
+
+    ////////ratio grafiği bitti////// 
+    
+
+
+
+    d3.csv("something02.txt", function(err, rows){
+
+    function unpack(rows, key) {
+    return rows.map(function(row) { return row[key]; });
+    }    
+
+
+    var date = unpack(rows, "Date")
+    
+    
+    ////level1/////
+    var level1 = unpack(rows, 'Level1')
+    var level1obj = {"int": [],
+                    "sum": 0,
+                    "means": [],
+                    "mean": 0,
+                    "residue": [],             
+}
+
+    for(var i = 0; i< level1.length; i++){
+        level1obj.int.push(parseFloat(level1[i]));
+        level1obj.sum += parseFloat(level1[i]);
+    }
+
+    level1obj.mean = level1obj.sum / (level1obj.int.length)
+
+    for(var i = 0; i < level1obj.int.length; i++){
+        level1obj.means.push(level1obj.mean)
+        level1obj.residue.push(Math.abs(level1obj.int[i]-level1obj.mean) / Math.sqrt(level1obj.int[i])) ///burayı ekle diğerleri için
+    }
+
+    console.log(level1obj.residue)
+
+    var level1trc = {
+    type: "scattergl",
+    mode: "markers+lines",
+    name: 'Level1',
+    marker: { color: '#9b59b6', size: 3.5},
+    line: { color: '#9b59b6', width: 0.1},
+    x: date,
+    y: level1obj.int,
+    legendgroup: 'level1',
+    xaxis: "x1",
+    yaxis: "y1"
+    
+    
+    }
+
+    var level1mean = {   
+    type: "scattergl",
+    mode: "lines",
+    name: 'Level1 Mean',
+    legendgroup: 'level1',
+    showlegend: false,
+    line: { color: '#9b59b6', width: 1},
+    x: date,
+    y: level1obj.means,
+    xaxis: "x1",
+    yaxis: "y1",
+    }
+
+
+
+
+
+    /////level2erature////
+
+    var level2 = unpack(rows, 'Level2')
+    var level2obj = { "int": [],
+                    "sum": 0,
+                    "means": [],
+                    "mean": 0,
+                    "residue": []            
+}
+
+    for(var i = 0; i< level2.length; i++){
+        level2obj.int.push(parseFloat(level2[i]));
+        level2obj.sum += parseFloat(level2[i]);
+    }
+
+    level2obj.mean = level2obj.sum / (level2obj.int.length)
+
+    for(var i = 0; i < level2obj.int.length; i++){
+        level2obj.means.push(level2obj.mean)
+        level2obj.residue.push(Math.abs(level2obj.int[i]-level2obj.mean) / Math.sqrt(level2obj.int[i]))
+    }
+
+    console.log(level2obj)
+
+    var level2trc = {
+    type: "scattergl",
+    mode: "markers+lines",
+    name: 'Level2',
+    marker: { color: '#117864', size: 3.5, symbol:"triangle-up"},
+    line: { color: '#117864', width: 0.1},
+    x: date,
+    y: level2obj.int,
+    legendgroup: 'level2',
+    xaxis: "x1",
+    yaxis: "y1",
+    
+    }
+
+    var level2mean = {
+    type: "scattergl",
+    mode: "lines",
+    name: 'Level2 Mean',
+    legendgroup: 'level2',
+    showlegend: false,
+    line: { color: '#117864', width: 1},
+    x: date,
+    y: level2obj.means,
+    xaxis: "x1",
+    yaxis: "y1",
+    }
+
+
+    //////DAMP/////
+
+    var level3 = unpack(rows, 'Level3')
+    var level3obj = { "int": [],
+                    "sum": 0,
+                    "means": [],
+                    "mean": 0,
+                    "residue": []             
+}
+
+    for(var i = 0; i< level3.length; i++){
+        level3obj.int.push(parseFloat(level3[i]));
+        level3obj.sum += parseFloat(level3[i]);
+    }
+
+    level3obj.mean = level3obj.sum / (level3obj.int.length)
+
+    for(var i = 0; i < level3obj.int.length; i++){
+        level3obj.means.push(level3obj.mean);
+        level3obj.residue.push(Math.abs(level3obj.int[i]-level3obj.mean) / Math.sqrt(level3obj.int[i]))
+    }
+
+    console.log(level3obj)
+
+    var level3trc = {
+    type: "scattergl",
+    mode: "markers+lines",
+    name: 'Level3',
+    marker: { color: '#9c640c', size: 3.5, symbol:"square-dot"},
+    line: { color: '#9c640c', width: 0.1},
+    x: date,
+    y: level3obj.int,
+    xaxis: "x1",
+    yaxis: "y1",
+    legendgroup: 'level3',
+    
+    }
+
+    var level3mean = {
+    type: "scattergl",
+    mode: "lines",
+    name: 'Level3 Mean',
+    legendgroup: 'level3',
+    showlegend: false,
+    line: { color: '#9c640c', width: 1},
+    x: date,
+    y: level3obj.means,
+    xaxis: "x1",
+    yaxis: "y1",
+    }
+
+
+
+
+    ////Level4///
+
+    var level4 = unpack(rows, 'Level4')
+    var level4obj = { "int": [],
+                    "sum": 0,
+                    "means": [],
+                    "mean": 0,
+                    "residue": []             
+}
+
+    for(var i = 0; i< level4.length; i++){
+        level4obj.int.push(parseFloat(level4[i]));
+        level4obj.sum += parseFloat(level4[i]);
+    }
+
+    level4obj.mean = level4obj.sum / (level4obj.int.length)
+
+    for(var i = 0; i < level4obj.int.length; i++){
+        level4obj.means.push(level4obj.mean);
+        level4obj.residue.push(Math.abs(level4obj.int[i]-level4obj.mean) / Math.sqrt(level4obj.int[i]))
+    }
+
+    console.log(level4obj)
+
+    var level4trc = {
+    type: "scattergl",
+    mode: "markers+lines",
+    name: 'Level4',
+    marker: { color: '#a93226', size: 3.5, symbol: "diamond-dot" },
+    line: { color: '#a93226', width: 0.1},
+    x: date,
+    y: level4obj.int,
+    legendgroup: 'level4',
+    xaxis: "x1",
+    yaxis: "y1",
+    }
+
+    var level4mean = {
+    type: "scattergl",
+    mode: "lines",
+    name: 'Level4 Means',
+    legendgroup: 'level4',
+    showlegend: false,
+    line: { color: '#a93226', width: 1},
+    x: date,
+    y: level4obj.means,
+    xaxis: "x1",
+    yaxis: "y1",
+    }
+
+    
+    
+    
+    /////ANA GRAFİK////
+
+
+    ///////////////TABLE GRAPH////////
+
+
+    var headerNames = ["Props","Level1","Level2","Level3","Level4"];
+
+     var cellValues = [["Max","Min","Std","Mean"],
+        [math.max(level1obj.int), math.min(level1obj.int), math.std(level1obj.int), level1obj.mean],
+        [math.max(level2obj.int), math.min(level2obj.int), math.std(level1obj.int), level2obj.mean],
+        [math.max(level3obj.int), math.min(level3obj.int), math.std(level3obj.int), level3obj.mean],
+        [math.max(level4obj.int), math.min(level4obj.int), math.std(level4obj.int), level4obj.mean]]; 
+
+
+
+    console.log(cellValues);
+
+    
+    var table = {
+    type: 'table',
+    columnwidth: [200,150,150,150,150],
+    columnorder: [0,1,2,3,4],
+    header: {
+        values: headerNames,
+        align: "center",
+        line: {width: 1, color: 'rgb(50, 50, 50)'},
+        fill: {color: ['#7f8938']},
+        font: {family: "Arial", size: 11, color: "white"}
+    },
+    cells: {
+        values: cellValues,
+        align: ["center", "center"],
+        line: {color: "black", width: 1},
+        fill: {color: ['#ccd695', '#e7ecc5']},
+        font: {family: "Arial", size: 10, color: ["black"]}
+    },
+    xaxis: "x2",
+    yaxis: "y2",
+    domain: {x: [0,1], y: [0.3,0.5]}
+    }
+
+    var datatab = [table];
+
+
+
+
+    ///////////RESidue subplots////////////
+
+
+    var level1residue = {
+    x: date,
+    y: level1obj.residue,
+    type: "scattergl",
+    mode: "markers+lines",
+    marker: { color: '#9b59b6', size: 3.5},
+    name: 'level1residue',
+    legendgroup: 'level1',
+    xaxis: "x3",
+    yaxis: "y3",
+    showlegend: false,
+    }
+
+    var level2residue = {
+    x: date,
+    y: level2obj.residue,
+    type: "scattergl",
+    mode: "markers+lines",
+    marker: { color: '#117864', size: 3.5},
+    name: 'Level2 Residue',
+    legendgroup: 'level2',
+    xaxis: "x3",
+    yaxis: "y3",
+    showlegend: false,
+    }
+
+    var level3residue = {
+    x: date,
+    y: level3obj.residue,
+    type: "scattergl",
+    mode: "markers+lines",
+    marker: { color: '#9c640c', size: 3.5},
+    name: 'Level3 Residue',
+    legendgroup: 'level3',
+    xaxis: "x3",
+    yaxis: "y3",
+    showlegend: false,
+    }
+
+    var level4residue = {
+    x: date,
+    y: level4obj.residue,
+    type: "scattergl",
+    mode: "markers+lines",
+    marker: { color: '#a93226', size: 3.5},
+    name: 'Level4 Residue',
+    legendgroup: 'level4',
+    xaxis: "x3",
+    yaxis: "y3",
+    showlegend: false,
+    }
+    
+    
+    var data = [level1trc, level1mean, level2trc, level2mean, level3trc, level3mean, level4trc, level4mean, table, level1residue, level2residue, level3residue, level4residue ];
+
+    var layout = {
+    title: 'Time Series with Rangeslider',
+    autosize: false,
+    margin: {
+    l: 35,
+    r: 35,
+    b: 35,
+    t: 35,
+    pad: 2
+  },
+    dragmode: 'zoom',
+    legend: {
+    "orientation": "h",
+    x: 0.879, xanchor:"center", y: 1.039, traceorder: 'normal',   itemwidth: 20,
+    font: {
+      family: 'sans-serif',
+      size: 10,
+      color: '#000'
+    }, bgcolor: '#e7ecc5',
+    bordercolor: '#7f8938',
+    borderwidth: 2
+  },
+    paper_bgcolor: '#bfc689',
+    plot_bgcolor: '#e7ecc5',
+    height: 1000,
+    width:1500, 
+    xaxis1: {    rangeslider: {range:[date[0], date[date.length]], thickness: 0.03, mode:"traces", bgcolor: "#e7ecc5", bordercolor: '#bfc689'},
+    autorange: false,
+    range: [date[date.length-365], date[date.length-1]],
+    rangeselector: {activecolor: '#bfc689', bgcolor: '#e7ecc5', bordercolor: '#e7ecc5',
+        
+        buttons: [
+        {
+          count: 1,
+          label: '1day',
+          step: 'day',
+          stepmode: 'backward'
+        },
+        {
+          count: 7,
+          label: '1week',
+          step: 'day',
+          stepmode: 'backward'
+        },
+        {
+          count: 14,
+          label: '2week',
+          step: 'day',
+          stepmode: 'backward'
+        },
+      ],
+    xanchor: "left"},
+    type: 'date',
+    },
+    yaxis1: {domain: [0.65,1],
+    autorange: true,
+    type: 'linear'
+    },
+    yaxis2: {domain: [0.33, 0.55]},
+    yaxis3: {domain: [0, 0.35],
+    autorange: true,
+    type: 'linear'
+    },
+    xaxis2: {domain: [0,1]},
+    xaxis3: {domain: [0,1],
+    autorange: false, range: [date[date.length-365] , date[date.length-1]], type: 'date', anchor:"y3"},
+    };
+
+    var config = {
+  toImageButtonOptions: {
+    format: 'svg', // one of png, svg, jpeg, webp
+    filename: 'custom_image',
+    height: 500,
+    width: 700,
+    scale: 1 // Multiply title/legend/axis/canvas sizes by this factor
+  }
+};
+
+    Plotly.newPlot('myDiv', data, layout, config);  
+
+
+            ////y:level1////
+            var tr11 = {
+        x: level1obj.int,
+        y: level1obj.int,
+        xaxis: 'x',
+        yaxis: 'y',
+        type: 'scattergl',
+        mode:'markers',
+        marker: { color: '#9b59b6', size: 3.5}
+
+        };
+
+        var tr12 = {
+        x: level2obj.int,
+        y: level1obj.int,
+        xaxis: 'x2',
+        yaxis: 'y',
+        type: 'scattergl',
+        mode:'markers',
+        marker: { color: '#9b59b6', size: 3.5}
+        
+
+        };
+
+        var tr13 = {
+        x: level3obj.int,
+        y: level1obj.int,
+        xaxis: 'x3',
+        yaxis: 'y',
+        type: 'scattergl',
+        mode:'markers',
+        marker: { color: '#9b59b6', size: 3.5}
+
+        };
+
+
+        var tr14 = {
+        x: level4obj.int,
+        y: level1obj.int,
+        xaxis: 'x4',
+        yaxis: 'y',
+        type: 'scattergl',
+        mode:'markers',
+        marker: { color: '#9b59b6', size: 3.5}
+
+        };
+
+        /////y:level2////
+        var tr21 = {
+        x: level1obj.int,
+        y: level2obj.int,
+        xaxis: 'x',
+        yaxis: 'y2',
+        type: 'scattergl',
+        mode:'markers',
+        marker: { color: '#9b59b6', size: 3.5}
+
+        };
+
+        var tr22 = {
+        x: level2obj.int,
+        y: level2obj.int,
+        xaxis: 'x2',
+        yaxis: 'y2',
+        type: 'scattergl',
+        mode:'markers',
+        marker: { color: '#9b59b6', size: 3.5}
+
+        };
+
+        var tr23 = {
+        x: level3obj.int,
+        y: level2obj.int,
+        xaxis: 'x3',
+        yaxis: 'y2',
+        type: 'scattergl',
+        mode:'markers',
+        marker: { color: '#9b59b6', size: 3.5}
+
+        };
+
+
+        var tr24 = {
+        x: level4obj.int,
+        y: level2obj.int,
+        xaxis: 'x4',
+        yaxis: 'y2',
+        type: 'scattergl',
+        mode:'markers',
+        marker: { color: '#9b59b6', size: 3.5}
+
+        };
+
+        ////y:level3////
+
+        var tr31 = {
+        x: level1obj.int,
+        y: level3obj.int,
+        xaxis: 'x',
+        yaxis: 'y3',
+        type: 'scattergl',
+        mode:'markers',
+        marker: { color: '#9b59b6', size: 3.5}
+
+        };
+
+        var tr32 = {
+        x: level2obj.int,
+        y: level3obj.int,
+        xaxis: 'x2',
+        yaxis: 'y3',
+        type: 'scattergl',
+        mode:'markers',
+        marker: { color: '#9b59b6', size: 3.5}
+
+        };
+
+        var tr33 = {
+        x: level3obj.int,
+        y: level3obj.int,
+        xaxis: 'x3',
+        yaxis: 'y3',
+        type: 'scattergl',
+        mode:'markers',
+        marker: { color: '#9b59b6', size: 3.5}
+
+        };
+
+
+        var tr34 = {
+        x: level4obj.int,
+        y: level3obj.int,
+        xaxis: 'x4',
+        yaxis: 'y3',
+        type: 'scattergl',
+        mode:'markers',
+        marker: { color: '#9b59b6', size: 3.5}
+
+        };
+
+        /////y:level4ane////
+
+
+        var tr41 = {
+        x: level1obj.int,
+        y: level4obj.int,
+        xaxis: 'x',
+        yaxis: 'y4',
+        type: 'scattergl',
+        mode:'markers',
+        marker: { color: '#9b59b6', size: 3.5}
+
+        };
+
+        var tr42 = {
+        x: level2obj.int,
+        y: level4obj.int,
+        xaxis: 'x2',
+        yaxis: 'y4',
+        type: 'scattergl',
+        mode:'markers',
+        marker: { color: '#9b59b6', size: 3.5}
+
+        };
+
+        var tr43 = {
+        x: level3obj.int,
+        y: level4obj.int,
+        xaxis: 'x3',
+        yaxis: 'y4',
+        type: 'scattergl',
+        mode:'markers',
+        marker: { color: '#9b59b6', size: 3.5}
+
+        };
+
+
+        var tr44 = {
+        x: level4obj.int,
+        y: level4obj.int,
+        xaxis: 'x4',
+        yaxis: 'y4',
+        type: 'scattergl',
+        mode:'markers',
+        marker: { color: '#9b59b6', size: 3.5},
+        };
+        
+        //////subplots graph////
+
+        var datasp = [tr11, tr12, tr13, tr14, tr21, tr22, tr23, tr24, tr31, tr32, tr33, tr34, tr41, tr42, tr43, tr44];
+
+        var layoutsp = {
+        grid: {
+            rows: 4,
+            columns: 4,
+            subplots:[['xy','x2y','x3y','x4y'],['xy2','x2y2','x3y2','x4y2'],['xy3','x2y3','x3y3','x4y3'], ['xy4','x2y4','x3y4','x4y4']],
+            roworder:'top to bottom'
+        },
+        paper_bgcolor: '#bfc689',
+        plot_bgcolor: '#e7ecc5',
+        height: 1000,
+        width:1500, showlegend: false,
+        xaxis: {autorange: true, title: {text: "Level1"}},
+        xaxis2: {autorange: true, title: {text: "Level2"}},
+        xaxis3: {autorange: true,title: {text: "Level3"}},
+        xaxis4: {autorange: true,title: {text: "Level4"}},
+        yaxis: {autorange: true, title: {text: "Level1"}},
+        yaxis2: {autorange: true, title: {text: "Level2"}},
+        yaxis3: {autorange: true, title: {text: "Level3"}},
+        yaxis4: {autorange: true, title: {text: "Level4"}}};
+
+        Plotly.newPlot('myDivSplom', datasp, layoutsp, config);
+
+
+
+        var myDiv = document.getElementById('myDiv'); // Define division on which plot.ly Event Handler acts upon
+
+// Define Event processor to execute after user zooms in on a selected interval/area of plot
+    myDiv.on('plotly_relayout',
+        function(eventdata){  
+    console.log ('Zoom Event/running eventdata function')
+
+    // console.table(data[0]['y']);  uncomment to dump y-axis
+    var i; // Loop indice
+    var first_x = eventdata['xaxis.range[0]']; // Retrieve earliest/leftmost time/date stamp from selected interval in String format, from selected interval
+    var zoomed_level1_array = [ ];
+    var zoomed_level2_array = [ ];
+    var zoomed_level3_array = [ ];
+    var zoomed_level4_array = [ ]; // Array consisting of all y values within zoomed time interval, used to compute standard deviation
+    if (first_x==undefined) { first_x = new Date ('2019-01-01'); } // If this was a zoom out, set earliest/leftmost time/date stamp to Jan 1, 2000 @ midnight to include all data
+    console.log('X-Axis Min:' + first_x); // Dump leftmost timedatestamp to web developer console window
+    var last_x = eventdata['xaxis.range[1]']; // Retrieve latest/rightmost time/date stamp from selected interval in String format, from selected interval
+    if (last_x==undefined) { last_x = new Date ('2019-12-31'); } // If this was a zoom out, set latest/rightmost time/date stamp to Jan 1, 2099 @ midnight to include all data
+    console.log('X-Axis Max:' + last_x); // Dump rightmost/latest timedatestamp to web developer console window
+    // console.table( plotly_vars['data']['x'] ); Uncomment this line to write x-axis data array to console window
+    // console.log('First x-element: ' + plotly_vars['data'][0]['x'][0] ); Uncomment this line to write first x-axis element to console window
+    var num_points =  data[0]['x'].length; // Compute total number of points on x-axis (entire dataset before zoom) based upon data array length
+    console.log ('num_points: ' + num_points);
+    var num_points_in_zoom = 0; // Initialize indice containing the number of points within the zoomed region (running counter)
+    analyte_level1_sum = 0;
+    analyte_level2_sum = 0;
+    analyte_level3_sum = 0;
+    analyte_level4_sum = 0; // Zero the sum of analyte results later used to compute average
+    var datt = [];
+
+    
+    
+    /* ilgili tarih aralığı burada seçiliyor, ardından ilgili aralığın Y aksisidenki değerler bir
+    değişkene atanıp toplanıyor(analyte sum), tarih aralığına ait array burada oluşturuluyor, ilgili
+    aralığa ait değerlerin bütün verilerini içeren veriler burada oluşturuluyor */
+    
+    for (i = 0; i < num_points; i++) { // Loop through entire dataset to sum across only those points within zoomed region (sum used to compute average)
+    var single_date = data[0]['x'][i]; // Return a single time/date stamp in String format
+    
+    // Below statement compares timedatestamp of each point to endpoints of interval.  To allow a logical comparison, the string timedatestamps must be coerced
+    // into numeric format with Date() function
+    
+    if ( new Date ( single_date ) > new Date (first_x) && new Date ( single_date ) < new Date (last_x) )
+        { analyte_level1_sum += data[0]['y'][i]; // Add y-axis analyte results to sum if their timedatestamp lies withn zoomed interval
+        analyte_level2_sum += data[2]['y'][i];
+        analyte_level3_sum += data[4]['y'][i];
+        analyte_level4_sum += data[6]['y'][i];
+        datt.push(new Date(single_date));
+        num_points_in_zoom += 1; // Increment count of total number of points later used to compute average
+        zoomed_level1_array.push( data[0]['y'][i] )
+        zoomed_level2_array.push( data[2]['y'][i] )
+        zoomed_level3_array.push( data[4]['y'][i] )
+        zoomed_level4_array.push( data[6]['y'][i] ); // Build array comprising all y-values, for use in calculating standard deviation
+        }
+    }
+    console.log('Sum of analyte results:' + analyte_level1_sum); // Write sum to console window for debugging purposes
+    console.log('N, Number of Results in zoomed dataset interval:' + num_points_in_zoom); // Write number of points to console window for debugging purposes
+    
+    ////ortalama değerleri, array değil tekil değerler////
+    var zoom_average_level1 = (analyte_level1_sum / num_points_in_zoom);
+    var zoom_average_level2 = (analyte_level2_sum / num_points_in_zoom);
+    var zoom_average_level3 = (analyte_level3_sum / num_points_in_zoom);
+    var zoom_average_level4 = (analyte_level4_sum / num_points_in_zoom);// Compute average across zoomed-interval
+    
+    /////ortalama çizgilerinin arrayleri burada oluşturuluyor///
+    var level1avg = [];
+    var level2avg = [];
+    var level3avg = [];
+    var level4avg = [];
+
+    for(i=0; i<num_points_in_zoom; i++){
+        level1avg.push(zoom_average_level1)
+        level2avg.push(zoom_average_level2)
+        level3avg.push(zoom_average_level3)
+        level4avg.push(zoom_average_level4)
+    }
+
+    //console.log(datt)
+
+    ///residueler burada hesaplanıyor///
+    var zoomed_level1_residue = [];
+    var zoomed_level2_residue = [];
+    var zoomed_level3_residue = [];
+    var zoomed_level4_residue = [];
+
+    for(i=0; i < num_points_in_zoom; i++){
+        zoomed_level1_residue.push(Math.abs(zoomed_level1_array[i]-zoom_average_level1) / Math.sqrt(zoomed_level1_array[i]));
+        zoomed_level2_residue.push(Math.abs(zoomed_level2_array[i]-zoom_average_level2) / Math.sqrt(zoomed_level2_array[i]));
+        zoomed_level3_residue.push(Math.abs(zoomed_level3_array[i]-zoom_average_level3) / Math.sqrt(zoomed_level3_array[i]));
+        zoomed_level4_residue.push(Math.abs(zoomed_level4_array[i]-zoom_average_level4) / Math.sqrt(zoomed_level4_array[i]));
+    }
+
+    var level1residueupdated = {
+        y: [zoomed_level1_residue],
+        xaxis: "x3",
+    }
+
+    var level2residueupdated = {
+        y: [zoomed_level2_residue],
+        xaxis: "x3",
+    }
+
+    var level3residueupdated = {
+        y: [zoomed_level3_residue],
+        xaxis: "x3",
+    }
+
+    var level4residueupdated = {
+        y: [zoomed_level4_residue],
+        xaxis: "x3",
+    }
+
+    
+    /////tablonun değerlerinin atanması altta yapılıyor///
+     var cellValues = [["Max","Min","Std","Mean"],
+        [math.max(zoomed_level1_array), math.min(zoomed_level1_array), math.std(zoomed_level1_array), zoom_average_level1],
+        [math.max(zoomed_level2_array), math.min(zoomed_level2_array), math.std(zoomed_level2_array), zoom_average_level2],
+        [math.max(zoomed_level3_array), math.min(zoomed_level3_array), math.std(zoomed_level3_array), zoom_average_level3],
+        [math.max(zoomed_level4_array), math.min(zoomed_level4_array), math.std(level4obj.int), zoom_average_level4]];
+
+    var cellValues2 = [["Max","Min","Std","Mean"],
+        [1,1,1,1],
+        [1,1,1,1],
+        [1,1,1,1],
+        [1,1,1,1]];
+
+
+    ///splom matrix data düzeltme denemesi///
+
+        var t11 = {
+        x: zoomed_level1_array,
+        y: zoomed_level1_array
+        };
+
+        var t12 = {
+        x: zoomed_level2_array,
+        y: zoomed_level1_array,
+        };
+
+        var t13 = {
+        x: zoomed_level3_array,
+        y: zoomed_level1_array,};
+
+
+        var t14 = {
+        x: zoomed_level4_array,
+        y: zoomed_level1_array,     };
+
+        /////y:level2////
+        var t21 = {
+        x: zoomed_level1_array,
+        y: zoomed_level2_array, };
+
+        var t22 = {
+        x: zoomed_level2_array,
+        y: zoomed_level2_array,
+        };
+
+        var t23 = {
+        x: zoomed_level3_array,
+        y: zoomed_level2_array,
+        };
+
+
+        var t24 = {
+        x: zoomed_level4_array,
+        y: zoomed_level2_array,};
+
+        ////y:level3////
+
+        var t31 = {
+        x: zoomed_level1_array,
+        y: zoomed_level3_array,
+        };
+
+        var t32 = {
+        x: zoomed_level2_array,
+        y: zoomed_level3_array,
+
+        };
+
+        var t33 = {
+        x: zoomed_level3_array,
+        y: zoomed_level3_array,
+
+        };
+
+
+        var t34 = {
+        x: zoomed_level4_array,
+        y: zoomed_level3_array,
+        };
+
+        /////y:level4ane////
+
+
+        var t41 = {
+        x: zoomed_level1_array,
+        y: zoomed_level4_array,
+
+        };
+
+        var t42 = {
+        x: zoomed_level2_array,
+        y: zoomed_level4_array,
+        };
+
+        var t43 = {
+        x: zoomed_level3_array,
+        y: zoomed_level4_array,
+        };
+
+
+        var t44 = {
+        x: zoomed_level4_array,
+        y: zoomed_level4_array,
+        };
+
+
+
+        var datasp2 = [t11, t12, t13, t14, t21, t22, t23, t24, t31, t32, t33, t34, t41, t42, t43, t44];
+
+        var layoutsp2 = {
+        grid: {
+            rows: 4,
+            columns: 4,
+            subplots:[['xy','x2y','x3y','x4y'],['xy2','x2y2','x3y2','x4y2'],['xy3','x2y3','x3y3','x4y3'], ['xy4','x2y4','x3y4','x4y4']],
+            roworder:'top to bottom'
+        },
+        height: 1000,
+        width:1500, showlegend: false,
+        xaxis: {autorange: true},
+        xaxis2: {autorange: true},
+        xaxis3: {autorange: true},
+        xaxis4: {autorange: true},
+        yaxis: {autorange: true},
+        yaxis2: {autorange: true},
+        yaxis3: {autorange: true},
+        yaxis4: {autorange: true}};
+
+
+    ///////////////////updated layout///////////
+    
+    var layout_updated = {
+    title: 'Time Series with Rangeslider',
+    xaxis1: {
+    range:[datt[0], datt[datt.length-1]],
+    rangeslider: {autorange: true, thickness: 0.04, mode:"traces", bgcolor: "#e7ecc5", bordercolor: '#bfc689'},
+    type: 'date',
+    },
+    yaxis1: {domain: [0.65,1],
+    autorange: true,
+    type: 'linear'
+    },
+    yaxis2: {domain: [0.33, 0.55]},
+    yaxis3: {domain: [0, 0.35],
+    autorange: true,
+    type: 'linear'
+    },
+    xaxis2: {domain: [0,1]},
+    xaxis3: {domain: [0,1],
+    range:[datt[0], datt[datt.length-1]], type: 'date', anchor:"y3"},
+    };
+    
+    ///yeni grafikler çizdiriliyor///
+    Plotly.restyle('myDiv', {cells: {values: cellValues,
+        align: ["center", "center"],
+        line: {color: "black", width: 1},
+        fill: {color: ['#ccd695', '#e7ecc5']},
+        font: {family: "Arial", size: 10, color: ["black"]}}});
+    
+    Plotly.update('myDiv', {x: [datt], y: [level1avg, level2avg, level3avg, level4avg, zoomed_level1_residue, zoomed_level2_residue, zoomed_level3_residue, zoomed_level4_residue]}, layout_updated, [1,3,5,7,9,10,11,12]);
+
+    Plotly.restyle('myDivSplom',
+     {
+         x:[zoomed_level1_array, zoomed_level2_array, zoomed_level3_array, zoomed_level4_array, zoomed_level1_array, zoomed_level2_array, zoomed_level3_array, zoomed_level4_array, zoomed_level1_array, zoomed_level2_array, zoomed_level3_array, zoomed_level4_array, zoomed_level1_array, zoomed_level2_array, zoomed_level3_array, zoomed_level4_array],
+         y:[zoomed_level1_array, zoomed_level1_array, zoomed_level1_array, zoomed_level1_array, zoomed_level2_array, zoomed_level2_array, zoomed_level2_array, zoomed_level2_array, zoomed_level3_array, zoomed_level3_array, zoomed_level3_array, zoomed_level3_array, zoomed_level4_array, zoomed_level4_array, zoomed_level4_array, zoomed_level4_array]}, [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]);
+    
+    
+
+    console.log(zoomed_level1_array);
+    console.log(zoomed_level2_array);
+    console.log(zoomed_level3_array);
+    console.log(zoomed_level4_array);
+
+    
+    //console.log('Average Value:' + zoom_average_level1); // Write average value to console window
+    //console.log ('N2, Number of Results in un-zoomed dataset: ' + num_points); // Write total number of points to console window
+    //console.log ('σ stDev: ' + st_dev );
+    //document.getElementById("content").innerHTML = 'Average x̄ = ' + number_format(zoom_average,3) + ' StDev σ = ' + number_format(st_dev,4); // Write average rounded to 3 decimal places to web page
+    
+        });
+
+
+
+
+
+    });
+    
+
+</script>

@@ -1,0 +1,101 @@
+<head>
+	<!-- Load plotly.js into the DOM -->
+	<script src='https://cdn.plot.ly/plotly-2.4.2.min.js'></script>
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.min.js"></script>
+    <script type="text/javascript" src="http://livejs.com/live.js"></script>
+    <link rel="stylesheet" href="zmenu.css">
+    <link rel="shortcut icon" href="#">
+</head>
+
+<body>
+    <nav class="menu">
+        <ol>
+          <li class="menu-item"><a href="#0">Home</a></li>
+          <li class="menu-item"><a href="#0">About</a></li>
+          <li class="menu-item">
+            <a href="#0">Graphs</a>
+            <ol class="sub-menu">
+                <li class="menu-item"><a href="/something01.html">Graphs 1</a></li>
+                <li class="menu-item"><a href="/something02.html">Graphs 2</a></li>
+                <li class="menu-item"><a href="/something03.html">Graphs 3</a></li>
+            </ol>
+          </li>
+          <li class="menu-item">
+            <a href="#0">heatmap</a>
+            <ol class="sub-menu">
+              <li class="menu-item"><a href="/heatmap.html">heatmap</a></li>
+            </ol>
+          </li>
+          <li class="menu-item"><a href="#0">Contact</a></li>
+        </ol>
+      </nav>
+
+
+<div id="myDiv"></div>
+    <!-- Plotly chart will be drawn inside this DIV -->
+
+</body>
+
+<script>
+d3.csv("temel.txt", function(err, data1){
+    d3.csv("somethingmain.txt", function(err2, data2){
+      function unpack(data, key) {
+          return data.map(function(row) { return row[key]; });
+		}
+
+var names = unpack(data1, "Name");
+var level1 = unpack(data2, "Level1");
+var level2 = unpack(data2, "Level2");
+var level3 = unpack(data2, "Level3");
+var level4 = unpack(data2, "Level4");
+
+var texts = [];
+
+for(let i=0 ; i < names.length ; i++){
+    const str = "Name:" + names[i] + " - " + "Level1:" + level1[i] + " - " + "Level2:" + level2[i] + " - " + "Level3:" + level3[i] + " - " + "Level4:" + level4[i];
+    texts.push(str);
+}
+
+var colors = [];
+
+
+for (let i = 0; i < level1.length; i++){
+    if(level1[i] < 20){
+        col = "#daf210"
+    }
+    else if(level1[i] > 50){
+        col = "#f22810"
+    }
+    else {
+        col = "#3352c5"
+    }
+    colors.push(col);
+}
+console.log(level1)
+
+var data = [{
+        type: 'scattermapbox', text: texts,
+        lon: unpack(data1, 'Lon'), lat: unpack(data1, 'Lat'),
+        marker: {color: colors, size: 10}
+    }];
+
+    var layout = {
+	mapbox: {style: "stamen-terrain", center: {lon: 39, lat: 41.06}, 'zoom': 8},
+	showlegend: false,
+	width:1677.5, height: 700}
+
+Plotly.newPlot("myDiv", data, layout)
+
+
+document.getElementById('myDiv').on('plotly_click', function(data){
+    //var pts = '';
+    var link = data.points[0].text;
+    console.log(data)
+    window.open("http://127.0.0.1:5500/something"+link[14]+link[15]+".html");//open a url in a new ta
+});
+
+});
+});
+</script>

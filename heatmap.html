@@ -1,0 +1,130 @@
+<head>
+	<!-- Load plotly.js into the DOM -->
+	<script src='https://cdn.plot.ly/plotly-2.4.2.min.js'></script>
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.min.js"></script>
+    <script type="text/javascript" src="http://livejs.com/live.js"></script>
+    <link rel="stylesheet" href="zmenu.css">
+    <link rel="shortcut icon" href="#">
+</head>
+
+<body>
+    <nav class="menu">
+      <ol>
+        <li class="menu-item"><a href="#0">Home</a></li>
+        <li class="menu-item"><a href="#0">About</a></li>
+        <li class="menu-item">
+          <a href="#0">Graphs</a>
+          <ol class="sub-menu">
+              <li class="menu-item"><a href="/something01.html">Graphs 1</a></li>
+              <li class="menu-item"><a href="/something02.html">Graphs 2</a></li>
+              <li class="menu-item"><a href="/something03.html">Graphs 3</a></li>
+          </ol>
+        </li>
+        <li class="menu-item">
+          <a href="#0">heatmap</a>
+          <ol class="sub-menu">
+            <li class="menu-item"><a href="/heatmap.html">heatmap</a></li>
+          </ol>
+        </li>
+        <li class="menu-item"><a href="#0">Contact</a></li>
+      </ol>
+    </nav>
+
+
+<div id="myDiv"></div>
+    <!-- Plotly chart will be drawn inside this DIV -->
+
+<div id="myDiv2"></div>
+
+</body>
+
+<script>
+    
+    
+    d3.csv("heatmapdata.txt", function(err, rows){
+
+    function unpack(rows, key) {
+    return rows.map(function(row) { return row[key]; });
+    }
+
+    var numberOfRows = rows.length; // we can easily get the number of rows (excluding the title row)
+
+    columns = Object.keys( rows[0] );  // then taking the first row object and getting an array of the keys
+
+    var a = (parseInt(columns.length)+1)/2;
+    var zValues = [];
+    var ycol = [];
+
+      for(let i = 1; i < a; i++){
+          let arr = unpack(rows, columns[i]);
+          zValues.push(arr);
+          ycol.push(columns[i]);
+      } 
+
+    //console.log(zValues.length);
+
+
+
+    var data = [{z:zValues,   colorscale: 'YlGnBu',
+    x:  unpack(rows, 'Date'),
+    y: ycol,
+    type: 'heatmap',
+    hoverongaps: false}];
+
+    var layout = {title: "Heatmap of all levels",
+    xaxis:{type: 'date'},
+    yaxis:{ticks: ''},
+    width: 1677.5,
+    height: 350, };
+
+    Plotly.newPlot('myDiv', data, layout);
+
+var zstd = [];
+
+for(let i = a; i < columns.length; i++){
+          let arr = unpack(rows, columns[i]);
+          zstd.push(arr);
+      }
+
+console.log(zValues);
+console.log(zstd);
+
+var data2 = [{z:zstd, autoscale:false, zauto: false, zmin: 0, zmax: 1 ,colorscale: [
+        [0.0, '#ff0000'],
+        [0.15, '#ff0000'],
+        [0.15, '#fa7105'],
+        [0.3, '#fa7105'],
+        [0.3, '#fdfd03'],
+        [0.44, '#fdfd03'],
+        [0.44, '#ffffff'],
+        [0.55, '#ffffff'],
+        [0.55, '#00ff08'],
+        [0.7, '#00ff08'],
+        [0.7, '#007cff'],
+        [0.85, '#007cff'],
+        [0.85, '#58038c'],
+        [1.0, '#58038c']
+  ],
+   colorbar:{len:1.2,
+      tickvals: [0,0.15,0.3,0.44,0.55,0.7,0.85,1],
+      ticktext: ["","-5σ","-3σ","-1σ","+1σ","+3σ","+5σ",""]
+    },
+    x:  unpack(rows, 'Date'),
+    y: ycol,
+    type: 'heatmap',
+    hoverongaps: false}];
+
+    var layout2 = {title: "Standart Deviations",
+    xaxis:{type: 'date'},
+    yaxis:{ticks: ''},
+    width: 1677.5,
+    height: 350, };
+
+    Plotly.newPlot('myDiv2', data2, layout2);
+
+
+
+})
+</script>
